@@ -1,0 +1,8 @@
+import numpy as np
+X=np.array([[0,0],[0,1],[1,0],[1,1]])
+y=np.array([[0],[1],[1],[0]])
+W1=np.random.rand(2,2); W2=np.random.rand(2,1)
+for _ in range(1000):
+    h=1/(1+np.exp(-X.dot(W1)))
+    out=1/(1+np.exp(-h.dot(W2)))
+print("Output:",out.round(2))

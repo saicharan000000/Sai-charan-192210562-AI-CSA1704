@@ -1,0 +1,10 @@
+teaches(mr_smith,math,101).
+teaches(ms_jane,science,102).
+student(john,math,101).
+student(mary,science,102).
+
+
+Query:
+
+?- teaches(Teacher,math,101).
+?- student(mary,Sub,Code).

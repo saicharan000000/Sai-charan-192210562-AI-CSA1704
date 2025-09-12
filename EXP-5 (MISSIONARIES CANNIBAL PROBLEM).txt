@@ -1,0 +1,55 @@
+from collections import deque
+
+def is_valid(m_left, c_left, m_right, c_right):
+    if m_left < 0 or c_left < 0 or m_right < 0 or c_right < 0:
+        return False
+    if m_left > 3 or c_left > 3 or m_right > 3 or c_right > 3:
+        return False
+    if (m_left != 0 and m_left < c_left):
+        return False
+    if (m_right != 0 and m_right < c_right):
+        return False
+    return True
+
+def solve():
+    start = (3, 3, 0, 0, 1)  # (M_left, C_left, M_right, C_right, BoatSide=1-left,0-right)
+    goal = (0, 0, 3, 3, 0)
+    queue = deque([(start, [])])
+    visited = set()
+
+    while queue:
+        state, path = queue.popleft()
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        if state == goal:
+            return path + [state]
+
+        m_left, c_left, m_right, c_right, boat = state
+
+        moves = [(1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
+
+        for m, c in moves:
+            if boat == 1:  
+                new_state = (m_left - m, c_left - c,
+                             m_right + m, c_right + c, 0)
+            else:  
+                new_state = (m_left + m, c_left + c,
+                             m_right - m, c_right - c, 1)
+
+            if is_valid(*new_state[:-1], new_state[-1]):
+                queue.append((new_state, path + [state]))
+
+    return None
+
+solution = solve()
+if solution:
+    print("Solution found! Steps:")
+    step = 0
+    for s in solution:
+        step += 1
+        print(f"Step {step}: Left -> M={s[0]}, C={s[1]} | Right -> M={s[2]}, C={s[3]} | Boat={'Left' if s[4]==1 else 'Right'}")
+else:
+    print("No solution exists!")

@@ -1,0 +1,5 @@
+from sklearn import tree
+X=[[0],[1],[2],[3]]
+Y=["kid","teen","adult","senior"]
+clf=tree.DecisionTreeClassifier().fit(X,Y)
+print(clf.predict([[2]]))

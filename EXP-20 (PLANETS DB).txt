@@ -1,0 +1,10 @@
+planet(mercury,57).
+planet(venus,108).
+planet(earth,150).
+planet(mars,228).
+
+
+(distance in million km from sun)
+Query:
+
+?- planet(mars,D).
