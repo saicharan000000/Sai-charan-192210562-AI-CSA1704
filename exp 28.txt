@@ -1,0 +1,24 @@
+% Graph edges with heuristic values
+edge(a, b, 3).
+edge(a, c, 1).
+edge(b, d, 2).
+edge(c, d, 5).
+edge(c, e, 2).
+edge(d, goal, 0).
+edge(e, goal, 0).
+
+best_first_search(Start, Goal, Path) :-
+    bfs([[Start]], Goal, Path).
+
+bfs([[Goal|Path]|_], Goal, [Goal|Path]).
+bfs([ [Node|Path] | Rest], Goal, Result) :-
+    findall([Next,Node|Path],
+            (edge(Node, Next, _)),
+            NewPaths),
+    append(Rest, NewPaths, UpdatedPaths),
+    sort(UpdatedPaths, Sorted),
+    bfs(Sorted, Goal, Result).
+output:
+?- best_first_search(a, goal, Path).
+Path = [goal, d, b, a] ;
+Path = [goal, d, c, a].

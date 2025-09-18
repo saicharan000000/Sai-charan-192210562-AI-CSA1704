@@ -1,0 +1,47 @@
+# Map Coloring Problem using CSP (Backtracking)
+
+# Define the map of regions and neighbors
+neighbors = {
+    "WA": ["NT", "SA"],
+    "NT": ["WA", "SA", "Q"],
+    "SA": ["WA", "NT", "Q", "NSW", "V"],
+    "Q": ["NT", "SA", "NSW"],
+    "NSW": ["Q", "SA", "V"],
+    "V": ["SA", "NSW"],
+    "T": []  # Tasmania has no land borders
+}
+
+# Available colors
+colors = ["Red", "Green", "Blue"]
+
+# Function to check if assignment is valid
+def is_valid(assignment, region, color):
+    for neighbor in neighbors[region]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+# Backtracking CSP solver
+def backtrack(assignment):
+    # If all regions are assigned, return solution
+    if len(assignment) == len(neighbors):
+        return assignment
+    
+    # Select an unassigned region
+    unassigned = [r for r in neighbors if r not in assignment]
+    region = unassigned[0]
+    
+    for color in colors:
+        if is_valid(assignment, region, color):
+            assignment[region] = color
+            result = backtrack(assignment)
+            if result:
+                return result
+            assignment.pop(region)
+    return None
+
+# Run the solver
+solution = backtrack({})
+print("Solution:", solution)
+OUTPUT:
+Solution: {'WA': 'Red', 'NT': 'Green', 'SA': 'Blue', 'Q': 'Red', 'NSW': 'Green', 'V': 'Red', 'T': 'Red'}

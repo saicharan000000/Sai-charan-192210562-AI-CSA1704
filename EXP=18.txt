@@ -1,0 +1,35 @@
+% person_db.pl
+% person(Name, dob(Year,Month,Day)).
+
+person(john_doe, dob(1990, 5, 23)).
+person(mary_sue, dob(1985, 11, 2)).
+person(alan, dob(2000, 1, 15)).
+
+% Query examples:
+% ?- person(Name, dob(Y,M,D)).
+% Name = john_doe, Y = 1990, M = 5, D = 23 ;
+% ...
+%
+% To add age calculation (simple):
+age(Name, Age) :-
+    person(Name, dob(Y, M, D)),
+    get_time(TS),
+    stamp_date_time(TS, date(CY,CM,CD,_,_,_,_,_,_), 'UTC'),
+    Age is CY - Y - ( (CM,CD) @< (M,D) ).
+QUERY:
+?- person(Name, dob(Y,M,D)).
+
+OUTPUT:
+Name = john_doe,
+Y = 1990,
+M = 5,
+D = 23 ;
+Name = mary_sue,
+Y = 1985,
+M = 11,
+D = 2 ;
+Name = alan,
+Y = 2000,
+M = 1,
+D = 15.
+

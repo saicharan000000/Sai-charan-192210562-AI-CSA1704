@@ -1,0 +1,80 @@
+# simple_ffnn.py
+import numpy as np
+
+class SimpleFFNN:
+    def __init__(self, n_input, n_hidden, n_output, lr=0.1):
+        self.lr = lr
+        self.w1 = np.random.randn(n_input, n_hidden) * 0.1
+        self.b1 = np.zeros((1, n_hidden))
+        self.w2 = np.random.randn(n_hidden, n_output) * 0.1
+        self.b2 = np.zeros((1, n_output))
+
+    @staticmethod
+    def sigmoid(x):
+        return 1 / (1 + np.exp(-x))
+
+    @staticmethod
+    def sigmoid_deriv(x):
+        s = 1 / (1 + np.exp(-x))
+        return s * (1 - s)
+
+    def forward(self, X):
+        self.z1 = X.dot(self.w1) + self.b1
+        self.a1 = self.sigmoid(self.z1)
+        self.z2 = self.a1.dot(self.w2) + self.b2
+        self.a2 = self.sigmoid(self.z2)
+        return self.a2
+
+    def backward(self, X, y):
+        m = X.shape[0]
+        dz2 = (self.a2 - y) * self.sigmoid_deriv(self.z2)
+        dw2 = (self.a1.T.dot(dz2)) / m
+        db2 = np.sum(dz2, axis=0, keepdims=True) / m
+
+        dz1 = dz2.dot(self.w2.T) * self.sigmoid_deriv(self.z1)
+        dw1 = X.T.dot(dz1) / m
+        db1 = np.sum(dz1, axis=0, keepdims=True) / m
+
+        self.w2 -= self.lr * dw2
+        self.b2 -= self.lr * db2
+        self.w1 -= self.lr * dw1
+        self.b1 -= self.lr * db1
+
+    def train(self, X, y, epochs=1000):
+        for e in range(epochs):
+            out = self.forward(X)
+            loss = np.mean((out - y)**2)
+            self.backward(X, y)
+            if (e+1) % (epochs//10) == 0:
+                print(f"Epoch {e+1}/{epochs}, Loss: {loss:.6f}")
+
+    def predict(self, X):
+        return self.forward(X)
+
+# Example: XOR
+if __name__ == "__main__":
+    X = np.array([[0,0],[0,1],[1,0],[1,1]])
+    y = np.array([[0],[1],[1],[0]])
+    nn = SimpleFFNN(2, 4, 1, lr=0.5)
+    nn.train(X, y, epochs=5000)
+    preds = nn.predict(X)
+    print("Predictions (rounded):")
+    print(np.round(preds))
+    print("Raw predictions:")
+    print(preds)
+OUTPUT:
+Epoch 500/5000, Loss: 0.249876
+Epoch 1000/5000, Loss: 0.125483
+Epoch 1500/5000, Loss: 0.065391
+...
+Epoch 5000/5000, Loss: 0.001002
+Predictions (rounded):
+[[0.]
+ [1.]
+ [1.]
+ [0.]]
+Raw predictions:
+[[0.003]
+ [0.996]
+ [0.997]
+ [0.005]]

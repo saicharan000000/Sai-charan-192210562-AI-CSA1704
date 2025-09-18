@@ -1,0 +1,21 @@
+% Facts
+parent(john, mary).
+parent(john, david).
+parent(mary, sophia).
+parent(mary, sam).
+
+% Rules
+father(X,Y) :- parent(X,Y), male(X).
+mother(X,Y) :- parent(X,Y), female(X).
+
+male(john).
+male(david).
+male(sam).
+female(mary).
+female(sophia).
+output:
+?- parent(john, mary).
+true.
+
+?- father(john, david).
+true.

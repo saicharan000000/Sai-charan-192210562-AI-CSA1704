@@ -1,0 +1,12 @@
+diet(diabetes, 'Avoid sugar, eat whole grains').
+diet(bp, 'Eat low salt, more fruits and vegetables').
+diet(obesity, 'Avoid junk food, eat salads and exercise').
+diet(anemia, 'Eat iron-rich food like spinach and beetroot').
+
+suggest_diet(Disease) :- 
+    diet(Disease, Advice), 
+    write('Diet suggestion: '), write(Advice).
+output:
+?- suggest_diet(bp).
+Diet suggestion: Eat low salt, more fruits and vegetables
+true.

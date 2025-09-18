@@ -1,0 +1,15 @@
+vowel(a). vowel(e). vowel(i). vowel(o). vowel(u).
+
+count_vowels([], 0).
+count_vowels([H|T], Count) :-
+    vowel(H),
+    count_vowels(T, Count1),
+    Count is Count1 + 1.
+count_vowels([_|T], Count) :-
+    count_vowels(T, Count).
+    output:
+    ?- count_vowels([h,e,l,l,o], N).
+N = 2.
+
+?- count_vowels([p,r,o,l,o,g], N).
+N = 2.

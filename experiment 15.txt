@@ -1,0 +1,88 @@
+# simple_id3.py
+import math
+from collections import Counter, defaultdict
+
+def entropy(labels):
+    total = len(labels)
+    counts = Counter(labels)
+    ent = 0.0
+    for c in counts.values():
+        p = c/total
+        ent -= p * math.log2(p)
+    return ent
+
+def info_gain(rows, attr_index, target_index):
+    base_entropy = entropy([r[target_index] for r in rows])
+    total = len(rows)
+    subsets = defaultdict(list)
+    for r in rows:
+        subsets[r[attr_index]].append(r)
+    remainder = 0.0
+    for subset in subsets.values():
+        remainder += (len(subset)/total) * entropy([r[target_index] for r in subset])
+    return base_entropy - remainder
+
+def majority_class(rows, target_index):
+    return Counter(r[target_index] for r in rows).most_common(1)[0][0]
+
+def id3(rows, attributes, target_index):
+    labels = [r[target_index] for r in rows]
+    if len(set(labels)) == 1:
+        return labels[0]
+    if not attributes:
+        return majority_class(rows, target_index)
+    gains = [(info_gain(rows, attr, target_index), attr) for attr in attributes]
+    best_gain, best_attr = max(gains, key=lambda x: x[0])
+    if best_gain == 0:
+        return majority_class(rows, target_index)
+    tree = {best_attr: {}}
+    values = set(r[best_attr] for r in rows)
+    for v in values:
+        subset = [r for r in rows if r[best_attr] == v]
+        if not subset:
+            tree[best_attr][v] = majority_class(rows, target_index)
+        else:
+            new_attrs = [a for a in attributes if a != best_attr]
+            tree[best_attr][v] = id3(subset, new_attrs, target_index)
+    return tree
+
+def predict(tree, sample):
+    if not isinstance(tree, dict):
+        return tree
+    root = next(iter(tree))
+    val = sample[root]
+    if val not in tree[root]:
+        # unknown branch: fallback to any branch (first)
+        return predict(tree[root][next(iter(tree[root]))], sample)
+    return predict(tree[root][val], sample)
+
+# Example usage:
+if __name__ == "__main__":
+    # Simple dataset: [Outlook, Temperature, Humidity, Windy, Play?]
+    data = [
+        ["Sunny","Hot","High","False","No"],
+        ["Sunny","Hot","High","True","No"],
+        ["Overcast","Hot","High","False","Yes"],
+        ["Rain","Mild","High","False","Yes"],
+        ["Rain","Cool","Normal","False","Yes"],
+        ["Rain","Cool","Normal","True","No"],
+        ["Overcast","Cool","Normal","True","Yes"],
+        ["Sunny","Mild","High","False","No"],
+        ["Sunny","Cool","Normal","False","Yes"],
+        ["Rain","Mild","Normal","False","Yes"],
+        ["Sunny","Mild","Normal","True","Yes"],
+        ["Overcast","Mild","High","True","Yes"],
+        ["Overcast","Hot","Normal","False","Yes"],
+        ["Rain","Mild","High","True","No"]
+    ]
+    attributes = [0,1,2,3]  # indices of features
+    target = 4
+    tree = id3(data, attributes, target)
+    print("Decision Tree:", tree)
+    test = ["Sunny","Cool","High","True"]
+    print("Prediction for", test, "=>", predict(tree, test))
+OUTPUT:
+Decision Tree: {0: {'Sunny': {2: {'High': 'No', 'Normal': 'Yes'}}, 
+                    'Overcast': 'Yes', 
+                    'Rain': {3: {'False': 'Yes', 'True': 'No'}}}}
+Prediction for ['Sunny', 'Cool', 'High', 'True'] => No

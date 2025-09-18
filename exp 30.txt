@@ -1,0 +1,19 @@
+fact(rain).
+fact(cloudy).
+
+rule([rain], wet_ground).
+rule([cloudy], take_umbrella).
+
+forward :- 
+    rule(Conditions, Conclusion),
+    check(Conditions),
+    assertz(fact(Conclusion)),
+    write('Derived: '), write(Conclusion), nl, fail.
+
+check([]).
+check([H|T]) :- fact(H), check(T).
+output:
+?- forward.
+Derived: wet_ground
+Derived: take_umbrella
+false.

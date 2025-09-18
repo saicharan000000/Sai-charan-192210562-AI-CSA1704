@@ -1,0 +1,97 @@
+# Tic Tac Toe game in Python (Player vs Player)
+
+def print_board(board):
+    print("\n")
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
+    print("---|---|---")
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print("---|---|---")
+    print(f" {board[6]} | {board[7]} | {board[8]} ")
+    print("\n")
+
+def check_winner(board, player):
+    # Winning combinations (rows, columns, diagonals)
+    win_conditions = [
+        [0,1,2], [3,4,5], [6,7,8],  # rows
+        [0,3,6], [1,4,7], [2,5,8],  # columns
+        [0,4,8], [2,4,6]            # diagonals
+    ]
+    for condition in win_conditions:
+        if all(board[i] == player for i in condition):
+            return True
+    return False
+
+def is_full(board):
+    return all(space != " " for space in board)
+
+def tic_tac_toe():
+    board = [" "] * 9
+    current_player = "X"
+    
+    print("Welcome to Tic Tac Toe!")
+    print_board(board)
+    
+    while True:
+        try:
+            move = int(input(f"Player {current_player}, enter your move (1-9): ")) - 1
+            if move < 0 or move >= 9 or board[move] != " ":
+                print("Invalid move. Try again.")
+                continue
+        except ValueError:
+            print("Please enter a valid number (1-9).")
+            continue
+
+        board[move] = current_player
+        print_board(board)
+        
+        # Check for win
+        if check_winner(board, current_player):
+            print(f"🎉 Player {current_player} wins! 🎉")
+            break
+        
+        # Check for draw
+        if is_full(board):
+            print("It's a draw!")
+            break
+        
+        # Switch player
+        current_player = "O" if current_player == "X" else "X"
+
+# Run the game
+tic_tac_toe()
+
+OUTPUT:
+Welcome to Tic Tac Toe!
+
+   |   |   
+---|---|---
+   |   |   
+---|---|---
+   |   |   
+
+Player X, enter your move (1-9): 1
+
+ X |   |   
+---|---|---
+   |   |   
+---|---|---
+   |   |   
+
+Player O, enter your move (1-9): 5
+
+ X |   |   
+---|---|---
+   | O |   
+---|---|---
+   |   |   
+
+Player X, enter your move (1-9): 9
+
+ X |   |   
+---|---|---
+   | O |   
+---|---|---
+   |   | X 
+
+...
+🎉 Player X wins! 🎉

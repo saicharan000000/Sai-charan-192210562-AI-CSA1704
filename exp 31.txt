@@ -1,0 +1,11 @@
+fact(sun).
+rule([sun], bright_day).
+
+prove(X) :- fact(X).
+prove(X) :- rule(Conditions, X), prove_all(Conditions).
+
+prove_all([]).
+prove_all([H|T]) :- prove(H), prove_all(T).
+output:
+?- prove(bright_day).
+true.

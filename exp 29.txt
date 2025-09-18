@@ -1,0 +1,15 @@
+symptom(cold, sneeze).
+symptom(cold, cough).
+symptom(flu, fever).
+symptom(flu, headache).
+symptom(malaria, chills).
+symptom(malaria, fever).
+
+diagnose(Disease) :-
+    symptom(Disease, Symptom),
+    write(Disease), write(' may cause '), write(Symptom), nl.
+output:
+?- diagnose(flu).
+flu may cause fever
+flu may cause headache
+true.

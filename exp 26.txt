@@ -1,0 +1,24 @@
+% Monkey Banana Problem
+move(state(middle,onbox,middle,hasnot),
+     grab,
+     state(middle,onbox,middle,has)).
+
+move(state(L,onfloor,L,B),
+     climb,
+     state(L,onbox,L,B)).
+
+move(state(L1,onfloor,L1,B),
+     push(L1,L2),
+     state(L2,onfloor,L2,B)).
+
+move(state(L1,onfloor,B,Ban),
+     walk(L1,L2),
+     state(L2,onfloor,B,Ban)).
+
+canget(state(_,_,_,has)).
+canget(State1) :- 
+    move(State1,_,State2),
+    canget(State2).
+output:
+?- canget(state(atdoor,onfloor,atwindow,hasnot)).
+true.

@@ -1,0 +1,8 @@
+match([], []).
+match([H|T1], [H|T2]) :- match(T1, T2).
+output:
+?- match([a,b,c], [a,b,c]).
+true.
+
+?- match([a,b], [a,c]).
+false.

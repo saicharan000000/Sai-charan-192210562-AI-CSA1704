@@ -1,0 +1,11 @@
+fruit(apple, red).
+fruit(banana, yellow).
+fruit(grape, green).
+fruit(orange, orange).
+fruit(mango, yellow).
+
+% Query will use backtracking
+output:
+?- fruit(Fruit, yellow).
+Fruit = banana ;
+Fruit = mango.
